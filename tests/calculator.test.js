@@ -73,6 +73,17 @@ test('invalid index/page requests fail instead of returning misleading results',
   for (const size of [0, -1, 1.5, 65537]) assert.throws(() => addressesForPage(result, 0, size), RangeError);
 });
 
+test('oversized raw input is rejected in both fields before parsing', () => {
+  assert.equal(formatIPv4(parseIPv4('255.255.255.255')), '255.255.255.255');
+  for (const input of ['255.255.255.255 ', ' '.repeat(1000000) + '1.2.3.4', '.'.repeat(1000000)]) {
+    assert.throws(() => calculate(input, '0.0.0.0'), /15文字以内/);
+    assert.throws(() => calculate('1.2.3.4', input), /15文字以内/);
+  }
+  for (const input of [null, undefined, 123, {}]) {
+    assert.throws(() => parseIPv4(input), /15文字以内/);
+  }
+});
+
 test('all last-octet masks match an independent exhaustive ACL predicate', () => {
   for (let mask = 0; mask < 256; mask += 1) {
     const input = 173;

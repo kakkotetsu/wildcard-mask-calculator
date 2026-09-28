@@ -64,12 +64,15 @@ function submit() {
   }
 }
 
-$('calculator-form').addEventListener('submit', event => {
-  event.preventDefault();
-  submit();
-});
+$('calculate').addEventListener('click', submit);
 // Hide stale results as soon as either input changes.
 for (const id of ['network', 'wildcard']) {
+  $(id).addEventListener('keydown', event => {
+    if (event.key === 'Enter' && !event.isComposing) {
+      event.preventDefault();
+      submit();
+    }
+  });
   $(id).addEventListener('input', () => {
     revision += 1;
     result = null;
@@ -136,3 +139,7 @@ $('download').addEventListener('click', () => {
 });
 
 submit();
+// Enable controls only after initialization and all event handlers are ready.
+$('calculator-fields').disabled = false;
+document.querySelectorAll('[data-example]').forEach(button => { button.disabled = false; });
+$('initialization-note').hidden = true;

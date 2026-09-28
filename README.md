@@ -26,9 +26,12 @@ Wildcard mask: `0.0.0.12`
 - The input may include nonzero host bits. All bits marked as fixed by the mask are preserved. For example, `192.168.1.10` with `0.0.0.12` matches addresses ending in `.2`, `.6`, `.10`, and `.14`.
 - Network and broadcast addresses are included. The tool does not check whether an address can be assigned to a host.
 - IPv4 octets with leading zeros, such as `001`, are rejected to avoid ambiguous interpretations.
+- Each input is limited to 15 characters, the maximum length of a dotted-decimal IPv4 address. The calculation function checks the raw input length, including surrounding whitespace, before trimming or splitting it.
 - Results are displayed in pages of 256 addresses. Even when all 4,294,967,296 IPv4 addresses match, only the requested page is generated in memory.
 - You can copy the current page. Downloading all results as a TXT file is available for up to 65,536 addresses to limit browser resource usage.
 - Clipboard access requires HTTPS or localhost. If browser permissions prevent copying, select and copy the addresses manually.
+
+Input controls stay disabled until JavaScript initialization completes. If JavaScript is disabled or fails to load, the controls remain disabled and a message is displayed. The calculator does not use an HTML form, so clicking a button or pressing Enter cannot fall back to submitting input values in a URL.
 
 ## Run locally
 

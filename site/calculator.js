@@ -1,5 +1,9 @@
 /* Pure IPv4 calculation functions, shared by the browser and tests. */
 export function parseIPv4(input, label = 'IPv4アドレス') {
+  // Check the raw length before trimming or splitting potentially large input.
+  if (typeof input !== 'string' || input.length > 15) {
+    throw new Error(`${label}は15文字以内のIPv4アドレスで入力してください。`);
+  }
   const value = input.trim();
   const parts = value.split('.');
   if (parts.length !== 4 || parts.some(part => !/^(0|[1-9]\d{0,2})$/.test(part) || Number(part) > 255)) {
