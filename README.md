@@ -1,12 +1,13 @@
-# Wildcard Calculator — ワイルドカード計算ツール
+# Wildcard Calculator
 
-ネットワークアドレス（IPv4アドレスのみ）とワイルドカードマスクを入力し、一致するIPv4アドレスを昇順で列挙する日本語のWebツールです。HTML・CSS・JavaScriptのみで動作し、サーバー処理、外部ライブラリ、外部フォントは不要です。入力値を外部に送信しません。
+A web tool with a Japanese interface that lists matching IPv4 addresses in ascending order from a network address and a wildcard mask. It uses only HTML, CSS, and JavaScript, with no server-side processing, external libraries, or external fonts. Input data stays in your browser.
 
-公開URL：<https://kakkotetsu.github.io/wildcard-mask-calculator/>
+Live site: <https://kakkotetsu.github.io/wildcard-mask-calculator/>
 
-## 入力例
+## Example
 
-ネットワークアドレス `192.168.1.0`、マスク `0.0.0.12`：
+Network address: `192.168.1.0`  
+Wildcard mask: `0.0.0.12`
 
 ```text
 192.168.1.0
@@ -15,63 +16,63 @@
 192.168.1.12
 ```
 
-## 計算の仕様
+## How matching works
 
-- マスクの **0のビットを入力アドレスに固定**し、**1のビットを0/1の全組み合わせに展開**します。非連続マスクにも対応します。
-- 判定式は `(候補アドレス & ~マスク) === (入力アドレス & ~マスク)` です。
-- CiscoのACLと同じく、IPv4アドレスとワイルドカードマスクだけで一致を判定します。CIDRの入力やネットワーク範囲による制限はありません。例：`192.168.1.0` + `0.0.1.0` → `192.168.0.0, 192.168.1.0`。
-- 結果の「ACLのアドレス条件」には、可変ビットを0に揃えたアドレスとマスクを表示します。ACLの送信元または宛先のアドレス条件として使えます。ACLコマンド全体を生成するものではありません。
-- `0.0.0.0` のマスクは単一アドレス（`host`）、`255.255.255.255` は全IPv4アドレス（`any`）に相当します。入力欄にはキーワードではなくIPv4の数値表記を入力してください。
-- 入力アドレスのホスト部は許可し、固定ビットを保持します。例：`192.168.1.10` + `0.0.0.12` → `.2, .6, .10, .14`。
-- ネットワーク／ブロードキャストアドレスも含めます。ホストに割り当て可能かの判定は行いません。
-- IPv4の先頭ゼロ付きオクテット（例：`001`）は解釈の曖昧さを避けるため拒否します。
-- 表示は1ページ256件。最大4,294,967,296件でも全件をメモリに展開せず、必要なページだけ計算します。
-- 表示中のページをコピーできます。全件のTXT保存はブラウザへの負荷を抑えるため65,536件までです。
-- コピー機能はHTTPSまたはlocalhostで利用できます。ブラウザの権限設定によって失敗する場合は手動で選択・コピーできます。
+- A **0 bit in the mask must match the corresponding input address bit**. A **1 bit can be either 0 or 1**. Non-contiguous masks are supported.
+- The matching rule is `(candidate & ~wildcard) === (inputAddress & ~wildcard)`.
+- Matching follows Cisco ACL semantics: only the IPv4 address and wildcard mask determine the result. No CIDR suffix is accepted, and no subnet boundary restricts matching. For example, `192.168.1.0` with `0.0.1.0` matches `192.168.0.0` and `192.168.1.0`.
+- The ACL address condition shown in the results contains the address with all wildcard bits cleared, followed by the wildcard mask. This pair can be used as an ACL source or destination address condition. The tool does not generate a complete ACL command.
+- A mask of `0.0.0.0` matches a single address, equivalent to `host`. A mask of `255.255.255.255` matches every IPv4 address, equivalent to `any`. Enter dotted-decimal IPv4 values rather than these keywords.
+- The input may include nonzero host bits. All bits marked as fixed by the mask are preserved. For example, `192.168.1.10` with `0.0.0.12` matches addresses ending in `.2`, `.6`, `.10`, and `.14`.
+- Network and broadcast addresses are included. The tool does not check whether an address can be assigned to a host.
+- IPv4 octets with leading zeros, such as `001`, are rejected to avoid ambiguous interpretations.
+- Results are displayed in pages of 256 addresses. Even when all 4,294,967,296 IPv4 addresses match, only the requested page is generated in memory.
+- You can copy the current page. Downloading all results as a TXT file is available for up to 65,536 addresses to limit browser resource usage.
+- Clipboard access requires HTTPS or localhost. If browser permissions prevent copying, select and copy the addresses manually.
 
-## ローカルで使う
+## Run locally
 
-Python 3がある環境で、リポジトリのルートから実行します。
+With Python 3 installed, run this command from the repository root:
 
 ```sh
 python3 -m http.server 8000 --directory site
 ```
 
-`http://localhost:8000` をブラウザで開いてください。JavaScriptモジュールを使用するため、HTMLファイルの直接オープン（`file://`）ではなくHTTPで配信します。
+Open `http://localhost:8000` in your browser. The application uses JavaScript modules, so serve it over HTTP instead of opening the HTML file directly with `file://`.
 
-## 現在の公開構成
+## Current deployment
 
-ソースコードは `main` ブランチに配置しています。GitHub Pagesの設定は **Settings → Pages → Source → GitHub Actions** です。公開対象は `site/` 内のHTML・CSS・JavaScriptのみで、`.env` は含めません。
+Source code is stored on the `main` branch. GitHub Pages is configured through **Settings → Pages → Source → GitHub Actions**. Only the HTML, CSS, and JavaScript under `site/` are deployed. The `.env` file is excluded.
 
-`main` へのpush時にGitHub Actionsが自動テストを実行し、成功した場合にサイトを更新します。プルリクエストではテストのみを実行します。
+Every push to `main` runs the automated tests and deploys the site if they pass. Pull requests run the tests without deploying.
 
-## 別のリポジトリでGitHub Pagesを設定する場合
+## Set up GitHub Pages in another repository
 
-1. GitHubで公開用リポジトリを作成します（無料プランの場合はPublic）。
-2. このプロジェクトをリポジトリの `main` ブランチに配置します。**`.github/workflows/pages.yml`** も含めてください。Classic PATでアップロードする場合は `repo` と `workflow` 権限が必要です。
-3. GitHubのリポジトリで **Settings → Pages → Build and deployment → Source → GitHub Actions** を選びます。
-4. **Actions → Test and deploy to GitHub Pages → Run workflow → main** を選び、実行します。以降は `main` へのpush時に自動でテスト・公開されます。
-5. ワークフローが成功すると、Settings → Pagesおよびデプロイジョブに公開URLが表示されます。通常は `https://<ユーザー名>.github.io/<リポジトリ名>/` です。
+1. Create a GitHub repository for the site. Use a public repository for GitHub Pages on a free plan.
+2. Add this project to the repository's `main` branch, including **`.github/workflows/pages.yml`**. If you upload using a classic personal access token, it needs the `repo` and `workflow` scopes.
+3. In the repository, select **Settings → Pages → Build and deployment → Source → GitHub Actions**.
+4. Open **Actions → Test and deploy to GitHub Pages → Run workflow**, select **main**, and run the workflow. Future pushes to `main` will automatically run the tests and deploy the site.
+5. Once the workflow succeeds, the site URL appears in Settings → Pages and in the deployment job. It is usually `https://<username>.github.io/<repository>/`.
 
-GitHub CLIやGitを使う場合も、公開先と認証の設定は別途必要です。すでにあるリポジトリへ配置するときは、既存ファイルへの上書きを確認してください。
+If you use Git or the GitHub CLI, configure the remote repository and authentication separately. Check for existing files before adding this project to an existing repository.
 
-他の静的ホスティングでも、公開ディレクトリを `site`、ビルドコマンドなしに設定すれば利用できます。
+For other static hosting providers, set the publish directory to `site` and leave the build command empty.
 
-## テスト
+## Tests
 
-Node.js 22以上で実行します。npm installは不要です。
+Run with Node.js 22 or later. No `npm install` is required.
 
 ```sh
 npm test
 ```
 
-指定の4件、非連続マスク、固定ホストビット、オクテットをまたぐ一致、単一アドレス・全IPv4アドレス、32ビット符号境界、不正入力、ページ分割を検証します。末尾オクテットの全256通りのマスクを、全候補に対する独立した一致判定と照合します。
+Tests cover the four-address example, non-contiguous masks, fixed host bits, matching across octets, single-address and all-IPv4 matches, the 32-bit sign boundary, invalid input, and pagination. All 256 possible masks in the last octet are checked against an independent matching predicate applied to every candidate value.
 
-## ファイル
+## Files
 
-- `site/index.html`：日本語の画面
-- `site/styles.css`：PC・スマートフォン対応のスタイル
-- `site/calculator.js`：IPv4計算処理
-- `site/app.js`：入力・ページ表示・コピー・TXT保存
-- `tests/calculator.test.js`：計算の自動テスト
-- `.github/workflows/pages.yml`：テストとGitHub Pagesへの自動公開
+- `site/index.html`: Japanese user interface
+- `site/styles.css`: Desktop and mobile styles
+- `site/calculator.js`: IPv4 calculation logic
+- `site/app.js`: Input handling, pagination, clipboard access, and TXT downloads
+- `tests/calculator.test.js`: Automated calculation tests
+- `.github/workflows/pages.yml`: Tests and automatic deployment to GitHub Pages
