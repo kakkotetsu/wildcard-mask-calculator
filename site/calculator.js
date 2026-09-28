@@ -13,23 +13,13 @@ export function formatIPv4(value) {
 }
 
 export function calculate(networkInput, wildcardInput) {
-  const parts = networkInput.trim().split('/');
-  if (parts.length !== 2 || !/^(0|[1-9]\d?)$/.test(parts[1]) || Number(parts[1]) > 32) {
-    throw new Error('ネットワークアドレスは 192.168.1.0/24 のように /0〜/32 を付けて入力してください。');
-  }
-  const address = parseIPv4(parts[0], 'ネットワークアドレス');
-  const prefix = Number(parts[1]);
+  const address = parseIPv4(networkInput, 'ネットワークアドレス');
   const wildcard = parseIPv4(wildcardInput, 'ワイルドカードマスク');
-  const networkMask = prefix === 0 ? 0 : (0xffffffff << (32 - prefix)) >>> 0;
-  if ((wildcard & networkMask) !== 0) {
-    throw new Error(`ワイルドカードマスクが /${prefix} のネットワーク範囲を超えています。マスクを小さくするか、CIDRのプレフィックス長を短くしてください。`);
-  }
   const base = (address & ~wildcard) >>> 0;
   const positions = Array.from({ length: 32 }, (_, bit) => bit).filter(bit => ((wildcard >>> bit) & 1) === 1);
   return {
-    address, prefix, wildcard, base, positions,
+    address, wildcard, base, positions,
     last: (base | wildcard) >>> 0,
-    network: (address & networkMask) >>> 0,
     count: 2 ** positions.length,
   };
 }

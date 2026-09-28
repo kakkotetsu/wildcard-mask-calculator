@@ -661,7 +661,7 @@ footer>span:last-child {
     font-size:21px;
   }
   .header-note {
-    font-size:10px;
+    display:none;
   }
   main {
     padding-top:35px;

@@ -46,7 +46,7 @@ function submit() {
     $('total').textContent = number(result.count);
     $('variable-bits').textContent = result.positions.length;
     $('power').textContent = result.positions.length;
-    $('network-result').textContent = `${formatIPv4(result.network)}/${result.prefix}`;
+    $('network-result').textContent = `${formatIPv4(result.base)} ${formatIPv4(result.wildcard)}`;
     $('normalized-note').hidden = result.base === result.address;
     $('normalized-note').textContent = `可変ビットを0にした ${formatIPv4(result.base)} を起点に列挙しています。`;
     $('download').disabled = result.count > EXPORT_LIMIT;
@@ -82,9 +82,9 @@ for (const id of ['network', 'wildcard']) {
   });
 }
 const examples = {
-  sparse: ['192.168.1.0/24', '0.0.0.12'],
-  subnet: ['192.168.1.0/24', '0.0.0.255'],
-  single: ['192.168.1.10/32', '0.0.0.0'],
+  sparse: ['192.168.1.0', '0.0.0.12'],
+  subnet: ['192.168.1.0', '0.0.0.255'],
+  single: ['192.168.1.10', '0.0.0.0'],
 };
 document.querySelectorAll('[data-example]').forEach(button => {
   button.addEventListener('click', () => {

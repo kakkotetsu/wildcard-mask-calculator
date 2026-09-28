@@ -5,43 +5,43 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#15263d">
   <meta name="description" content="ネットワークアドレスとワイルドカードマスクから、一致するIPv4アドレスを計算・列挙。非連続マスクにも対応する無料のブラウザツールです。">
-  <title>Wildcard — ワイルドカードマスク計算ツール</title>
+  <title>Wildcard Calculator — ワイルドカード計算ツール</title>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%2315263d'/%3E%3Ctext x='32' y='49' text-anchor='middle' font-size='54' fill='%235ee0b5'%3E*%3C/text%3E%3C/svg%3E">
   <link rel="stylesheet" href="./styles.css">
   <script type="module" src="./app.js"></script>
 </head>
 <body>
   <header class="site-header">
-    <a class="brand" href="./" aria-label="Wildcard ホーム"><span class="brand-symbol" aria-hidden="true">＊</span> Wildcard<span class="brand-sub">NETWORK TOOLS</span></a>
+    <a class="brand" href="./" aria-label="Wildcard Calculator ホーム"><span class="brand-symbol" aria-hidden="true">＊</span> Wildcard Calculator<span class="brand-sub">NETWORK TOOLS</span></a>
     <span class="header-note"><span class="status-dot"></span> ブラウザ内で計算</span>
   </header>
   <main>
     <section class="intro">
       <p class="eyebrow">IPv4 WILDCARD CALCULATOR</p>
-      <h1>ワイルドカードを、<br class="mobile-break">アドレスに。</h1>
-      <p class="intro-copy">ネットワークとマスクを入力するだけ。<br>一致するすべてのIPv4アドレスを、見やすく確認できます。</p>
+      <h1>ワイルドカード計算ツール</h1>
+      <p class="intro-copy">CiscoのACLと同じ、アドレスとマスクの組み合わせ。<br>一致するすべてのIPv4アドレスを、見やすく確認できます。</p>
     </section>
     <div class="workspace">
       <section class="card input-card" aria-labelledby="input-heading">
         <div class="card-heading"><span class="step">01</span><h2 id="input-heading">ネットワーク設定</h2></div>
         <form id="calculator-form" novalidate>
-          <label for="network">ネットワークアドレス <span class="label-tag">CIDR</span></label>
-          <input id="network" name="network" type="text" value="192.168.1.0/24" placeholder="192.168.1.0/24" spellcheck="false" autocapitalize="off" autocomplete="off" aria-describedby="network-help form-error" required>
-          <p class="field-help" id="network-help">IPv4アドレスに /0〜/32 を付けて入力</p>
+          <label for="network">ネットワークアドレス</label>
+          <input id="network" name="network" type="text" inputmode="decimal" value="192.168.1.0" placeholder="192.168.1.0" spellcheck="false" autocapitalize="off" autocomplete="off" aria-describedby="network-help form-error" required>
+          <p class="field-help" id="network-help">例：192.168.1.0（IPv4アドレスのみ）</p>
           <label for="wildcard">ワイルドカードマスク</label>
           <input id="wildcard" name="wildcard" type="text" value="0.0.0.12" placeholder="0.0.0.12" inputmode="decimal" spellcheck="false" autocomplete="off" aria-describedby="wildcard-help form-error" required>
           <p class="field-help" id="wildcard-help">0のビットは固定、1のビットは任意</p>
           <p id="form-error" class="error" role="alert" hidden></p>
           <button class="primary-button" type="submit">アドレスを計算 <span aria-hidden="true">→</span></button>
         </form>
-        <div class="examples"><p>サンプルを試す</p><div class="example-buttons"><button type="button" data-example="sparse">飛び飛びの4件</button><button type="button" data-example="subnet">/24の全256件</button><button type="button" data-example="single">1アドレス</button></div></div>
+        <div class="examples"><p>サンプルを試す</p><div class="example-buttons"><button type="button" data-example="sparse">飛び飛びの4件</button><button type="button" data-example="subnet">連続する256件</button><button type="button" data-example="single">1アドレス</button></div></div>
         <aside class="hint"><span aria-hidden="true">i</span><p>非連続マスクにも対応。<br>ネットワークアドレスとブロードキャストアドレスも結果に含みます。</p></aside>
       </section>
       <section class="card result-card" aria-labelledby="result-heading">
         <div class="card-heading result-heading"><div class="heading-group"><span class="step">02</span><h2 id="result-heading">計算結果</h2></div><span id="result-badge" class="badge">一致するアドレス</span></div>
         <div class="result-content" id="result-content" hidden>
           <div class="result-summary"><div><p class="small-label">該当アドレス数</p><p class="total"><span id="total">4</span><span class="unit">件</span></p></div><div class="bit-count"><span id="variable-bits">2</span> 可変ビット<p>2<sup id="power">2</sup> 通りの組み合わせ</p></div></div>
-          <div class="result-meta"><span>対象ネットワーク</span><code id="network-result"></code></div>
+          <div class="result-meta"><span>ACLのアドレス条件</span><code id="network-result"></code></div>
           <p id="normalized-note" class="result-note" hidden></p>
           <div class="list-toolbar"><p>IPv4アドレス <span class="ascending">昇順 ↑</span></p><button id="copy" class="text-button" type="button">表示中をコピー</button></div>
           <ol id="address-list" class="address-list" aria-label="一致するIPv4アドレス"></ol>
@@ -52,9 +52,9 @@
         <p id="announcement" class="sr-only" role="status" aria-live="polite"></p>
       </section>
     </div>
-    <section class="explanation" aria-labelledby="how-heading"><div><p class="eyebrow">HOW IT WORKS</p><h2 id="how-heading">ビットで見ると、<br>仕組みはシンプル。</h2></div><div class="explanation-body"><p>ワイルドカードマスクの <strong>0 は入力アドレスと一致</strong>、<strong>1 は0でも1でもよい</strong>ことを表します。マスク <code>0.0.0.12</code> の末尾は2進数で <code>00001100</code>。この2つのビットを切り替えると、末尾が0・4・8・12の4アドレスになります。</p><div class="bit-demo" aria-label="00001100：4と8の位置の2ビットが可変"><span>0</span><span>0</span><span>0</span><span>0</span><span class="active-bit">1</span><span class="active-bit">1</span><span>0</span><span>0</span><small><span class="legend-dot"></span> 可変ビット</small></div><p class="scope-note">CIDRは対象範囲の指定です。範囲外に広がるマスクはエラーになります。入力アドレスのうちマスクが0のビットは、ホスト部も含めて保持します。</p></div></section>
+    <section class="explanation" aria-labelledby="how-heading"><div><p class="eyebrow">HOW IT WORKS</p><h2 id="how-heading">ビットで見ると、<br>仕組みはシンプル。</h2></div><div class="explanation-body"><p>ワイルドカードマスクの <strong>0 は入力アドレスと一致</strong>、<strong>1 は0でも1でもよい</strong>ことを表します。マスク <code>0.0.0.12</code> の末尾は2進数で <code>00001100</code>。この2つのビットを切り替えると、末尾が0・4・8・12の4アドレスになります。</p><div class="bit-demo" aria-label="00001100：4と8の位置の2ビットが可変"><span>0</span><span>0</span><span>0</span><span>0</span><span class="active-bit">1</span><span class="active-bit">1</span><span>0</span><span>0</span><small><span class="legend-dot"></span> 可変ビット</small></div><p class="scope-note">CiscoのACLと同じビット単位の一致判定です。入力アドレスのうち、マスクが0のビットを保持し、1のビットをすべての組み合わせに展開します。</p></div></section>
   </main>
-  <footer><span class="footer-brand">＊ Wildcard</span><span>入力データは送信されません。計算はお使いのブラウザ内で完結します。</span><span>IPv4 only</span></footer>
+  <footer><span class="footer-brand">＊ Wildcard Calculator</span><span>入力データは送信されません。計算はお使いのブラウザ内で完結します。</span><span>IPv4 only</span></footer>
   <noscript><p class="noscript">この計算ツールを利用するには、ブラウザのJavaScriptを有効にしてください。</p></noscript>
 </body>
 </html>
