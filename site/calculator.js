@@ -35,7 +35,7 @@ export function addressAt(result, index) {
   return formatIPv4(value);
 }
 
-export function addressesForPage(result, page, pageSize = 64) {
+export function addressesForPage(result, page, pageSize = 256) {
   if (!Number.isInteger(pageSize) || pageSize < 1 || pageSize > 65536) throw new RangeError('ページサイズが範囲外です。');
   if (!Number.isInteger(page) || page < 0 || page >= Math.ceil(result.count / pageSize)) throw new RangeError('ページが範囲外です。');
   const start = page * pageSize;

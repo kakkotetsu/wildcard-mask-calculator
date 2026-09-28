@@ -16,8 +16,14 @@ test('full subnet includes network and broadcast and respects page boundaries', 
   const result = calculate('192.168.1.0', '0.0.0.255');
   assert.equal(result.count, 256);
   assert.equal(addressesForPage(result, 0)[0], '192.168.1.0');
-  assert.equal(addressesForPage(result, 1)[0], '192.168.1.64');
-  assert.equal(addressesForPage(result, 3).at(-1), '192.168.1.255');
+  assert.equal(addressesForPage(result, 0).length, 256);
+  assert.equal(addressesForPage(result, 0).at(-1), '192.168.1.255');
+  assert.throws(() => addressesForPage(result, 1), RangeError);
+  const multiplePages = calculate('192.168.0.0', '0.0.1.255');
+  assert.equal(addressesForPage(multiplePages, 0).at(-1), '192.168.0.255');
+  assert.equal(addressesForPage(multiplePages, 1)[0], '192.168.1.0');
+  assert.equal(addressesForPage(multiplePages, 1).length, 256);
+  assert.equal(addressesForPage(multiplePages, 1).at(-1), '192.168.1.255');
   assert.equal(addressesForPage(result, 2, 100).length, 56);
 });
 
@@ -31,7 +37,7 @@ test('all wildcard bits uses unsigned arithmetic without allocating all addresse
   assert.equal(result.count, 4294967296);
   assert.equal(addressAt(result, 2147483648), '128.0.0.0');
   assert.equal(addressAt(result, 4294967295), '255.255.255.255');
-  assert.equal(addressesForPage(result, 67108863).at(-1), '255.255.255.255');
+  assert.equal(addressesForPage(result, 16777215).at(-1), '255.255.255.255');
 });
 
 test('non-contiguous bits across octets and sign bit enumerate in ascending order', () => {

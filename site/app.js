@@ -1,7 +1,7 @@
 import { calculate, formatIPv4, addressAt, addressesForPage } from './calculator.js';
 
 const $ = id => document.getElementById(id);
-const PAGE_SIZE = 64;
+const PAGE_SIZE = 256;
 const EXPORT_LIMIT = 65536;
 const number = value => value.toLocaleString('ja-JP');
 let result = null;
