@@ -667,7 +667,7 @@ footer>span:last-child {
     padding-top:35px;
   }
   .intro h1 {
-    font-size:29px;
+    font-size:clamp(20px, 6.6vw, 29px);
   }
   .intro-copy {
     font-size:12px;
