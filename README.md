@@ -1,4 +1,4 @@
-# Wildcard Calculator
+# Wildcard Mask Calculator
 
 A web tool with a Japanese interface that lists matching IPv4 addresses in ascending order from a network address and a wildcard mask. It uses only HTML, CSS, and JavaScript, with no server-side processing, external libraries, or external fonts. Input data stays in your browser.
 
