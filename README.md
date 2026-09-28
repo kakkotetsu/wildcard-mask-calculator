@@ -37,10 +37,16 @@ python3 -m http.server 8000 --directory site
 
 `http://localhost:8000` をブラウザで開いてください。JavaScriptモジュールを使用するため、HTMLファイルの直接オープン（`file://`）ではなくHTTPで配信します。
 
-## GitHub Pagesで公開する
+## 現在の公開構成
+
+ソースコードは `main` ブランチに配置しています。GitHub Pagesの設定は **Settings → Pages → Source → GitHub Actions** です。公開対象は `site/` 内のHTML・CSS・JavaScriptのみで、`.env` は含めません。
+
+`main` へのpush時にGitHub Actionsが自動テストを実行し、成功した場合にサイトを更新します。プルリクエストではテストのみを実行します。
+
+## 別のリポジトリでGitHub Pagesを設定する場合
 
 1. GitHubで公開用リポジトリを作成します（無料プランの場合はPublic）。
-2. このプロジェクトをリポジトリの `main` ブランチに配置します。`site/`、`tests/`、`package.json` と **`.github/workflows/pages.yml`** も含めてください。
+2. このプロジェクトをリポジトリの `main` ブランチに配置します。**`.github/workflows/pages.yml`** も含めてください。Classic PATでアップロードする場合は `repo` と `workflow` 権限が必要です。
 3. GitHubのリポジトリで **Settings → Pages → Build and deployment → Source → GitHub Actions** を選びます。
 4. **Actions → Test and deploy to GitHub Pages → Run workflow → main** を選び、実行します。以降は `main` へのpush時に自動でテスト・公開されます。
 5. ワークフローが成功すると、Settings → Pagesおよびデプロイジョブに公開URLが表示されます。通常は `https://<ユーザー名>.github.io/<リポジトリ名>/` です。
@@ -66,4 +72,4 @@ npm test
 - `site/calculator.js`：IPv4計算処理
 - `site/app.js`：入力・ページ表示・コピー・TXT保存
 - `tests/calculator.test.js`：計算の自動テスト
-- `.github/workflows/pages.yml`：テストとGitHub Pages公開
+- `.github/workflows/pages.yml`：テストとGitHub Pagesへの自動公開
